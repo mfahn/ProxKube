@@ -16,7 +16,7 @@ tempFile="/tmp/ConvertRAWfile.txt"
 tempVMFile="/tmp/AVMS.txt"
 
 def download_vuln():
-    link = raw_input("What is the download link? ")
+    link = input("What is the download link? ")
     os.system("echo " + link + "| cut -d / -f 5 | sed 's/.\{4\}$//'" )
     os.system("wget "+ link + " && tar -xvf " + link)
 
@@ -39,20 +39,20 @@ def print_menu():
     print("4-Stop VM(s)")
     print("5-Start VM(s)")
     print("x-Exit")
-    return raw_input("Select an option: ")
+    return input("Select an option: ")
 
 def convert_vmdk():
-    os.system("cd " + raw_input("Path of folder with VMDK file(s): "))
+    os.system("cd " + input("Path of folder with VMDK file(s): "))
     os.system("ls *.mf | sed 's/.\{3\}$//' > " + tempFile)
     print("1) LVM-Thin")
     print("2) Directory ")
-    storageChoice = int(raw_input("What kind of storage are you using: "))
+    storageChoice = int(input("What kind of storage are you using: "))
     
     try:
         with open(tempFile) as fp:
             for i, line in enumerate(fp):
                 # The line below will be replaced with getting the starting VM ID and just filling in where there isnt VMIDs
-                vmIdInput = int(raw_input("What is the VM ID: "))
+                vmIdInput = int(input("What is the VM ID: "))
                 fileFound = find_config(line[:-1])
                 if fileFound:
                     parse_config(vmIdInput, line[:-1],".vmx", storageChoice)
@@ -69,7 +69,7 @@ def convert_vmdk():
         # elif(storageChoice == 1):
         #     with open(tempFile) as fp:
         #         for i, line in enumerate(fp):
-        #             vmIdInput = int(raw_input("What is the VM ID: "))
+        #             vmIdInput = int(input("What is the VM ID: "))
         #             convert_vmdk_raw(vmIdInput)
 
 def find_config(fileName):
@@ -167,12 +167,12 @@ def convert_vmdk_raw(vmId, vmName):
         for lineNum, lineInfo in enumerate(enumFile):
             #qemu-img convert -O raw /data/source.vmdk /data/output.raw
             os.system("qemu-img convert -O raw " + lineInfo[:-1] + ".vmdk " + vmName + ".raw")
-            print "Currently replacing " + lineInfo[:-1]+ ".raw for /dev/" + storageName + "/vm-" + str(vmId)+ "-disk-0"
+            print ("Currently replacing " + lineInfo[:-1]+ ".raw for /dev/" + storageName + "/vm-" + str(vmId)+ "-disk-0")
             os.system("mv " + vmName + ".raw /dev/" + storageName + "/vm-" +str(vmId)+ "-disk-0")
-            print "Successfully copied " + vmName + ".raw for /dev/" + storageName + "/vm-" + str(vmId)+ "-disk-0"
+            print ("Successfully copied " + vmName + ".raw for /dev/" + storageName + "/vm-" + str(vmId)+ "-disk-0")
             #cmdConvert = "mv " +lineInfo[:-1]+ ".vmdk /Data-ISO2/template/iso/."
             #print "Moved %s.vmdk" % lineInfo[:-1]
-            print "Completed"
+            print ("Completed")
 
 #In Development:
 def get_vm_list():
